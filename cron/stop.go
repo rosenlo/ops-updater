@@ -1,8 +1,8 @@
 package cron
 
 import (
-	"github.com/Cepave/ops-common/model"
-	"github.com/Cepave/ops-updater/g"
+	"github.com/RosenLo/ops-common/model"
+	"github.com/RosenLo/ops-updater/g"
 	"github.com/toolkits/file"
 	"log"
 	"path"

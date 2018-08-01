@@ -2,8 +2,8 @@ package cron
 
 import (
 	"fmt"
-	"github.com/Cepave/ops-common/model"
-	"github.com/Cepave/ops-common/utils"
+	"github.com/RosenLo/ops-common/model"
+	"github.com/RosenLo/ops-common/utils"
 	"github.com/toolkits/file"
 	"io/ioutil"
 	"log"

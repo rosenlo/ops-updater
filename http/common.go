@@ -1,7 +1,7 @@
 package http
 
 import (
-	"github.com/Cepave/ops-updater/g"
+	"github.com/RosenLo/ops-updater/g"
 	"github.com/toolkits/file"
 	"net/http"
 	"strings"

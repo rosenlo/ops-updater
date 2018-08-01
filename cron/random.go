@@ -1,7 +1,7 @@
 package cron
 
 import (
-	"github.com/Cepave/ops-updater/g"
+	"github.com/RosenLo/ops-updater/g"
 	"math/rand"
 	"time"
 )
