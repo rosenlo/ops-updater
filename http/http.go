@@ -2,12 +2,13 @@ package http
 
 import (
 	"encoding/json"
-	"github.com/RosenLo/ops-updater/g"
-	"github.com/kardianos/osext"
 	"log"
 	"net/http"
 	_ "net/http/pprof"
 	"os"
+
+	"github.com/RosenLo/ops-updater/g"
+	"github.com/kardianos/osext"
 )
 
 type Dto struct {
@@ -70,12 +71,12 @@ func Start() {
 	if addr == "" {
 		return
 	}
-	//s := &http.Server{
-	//	Addr:           addr,
-	//	MaxHeaderBytes: 1 << 30,
-	//}
+	s := &http.Server{
+		Addr:           addr,
+		MaxHeaderBytes: 1 << 30,
+	}
 	log.Println("http listening", addr)
-	err := http.ListenAndServeTLS(addr, certFilename, keyFilename, nil)
-	log.Fatalln(err)
+	//err := http.ListenAndServeTLS(addr, certFilename, keyFilename, nil)
+	log.Fatalln(s.ListenAndServe())
 
 }
