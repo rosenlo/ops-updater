@@ -2,17 +2,18 @@ package cron
 
 import (
 	"fmt"
-	"github.com/RosenLo/ops-common/model"
-	"github.com/RosenLo/ops-updater/g"
-	f "github.com/toolkits/file"
 	"log"
 	"os/exec"
 	"path"
 	"strings"
 	"time"
+
+	"github.com/RosenLo/ops-common/model"
+	"github.com/RosenLo/ops-updater/g"
+	f "github.com/toolkits/file"
 )
 
-func BuildHeartbeatRequest(hostname string, agentDirs []string) model.HeartbeatRequest {
+func BuildHeartbeatRequest(hostname, ip string, agentDirs []string) model.HeartbeatRequest {
 	req := model.HeartbeatRequest{Hostname: hostname}
 
 	realAgents := []*model.RealAgent{}
@@ -50,6 +51,7 @@ func BuildHeartbeatRequest(hostname string, agentDirs []string) model.HeartbeatR
 
 		realAgent := &model.RealAgent{
 			Name:      agentDir,
+			Ip:        ip,
 			Version:   version,
 			Status:    status,
 			Timestamp: now,

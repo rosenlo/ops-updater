@@ -4,12 +4,13 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
+	"log"
+	"time"
+
 	"github.com/RosenLo/ops-common/model"
 	"github.com/RosenLo/ops-common/utils"
 	"github.com/RosenLo/ops-updater/g"
 	"github.com/toolkits/net/httplib"
-	"log"
-	"time"
 )
 
 func Heartbeat() {
@@ -31,8 +32,9 @@ func heartbeat() {
 	if err != nil {
 		return
 	}
+	ip, _ := utils.LocalIp()
 
-	heartbeatRequest := BuildHeartbeatRequest(hostname, agentDirs)
+	heartbeatRequest := BuildHeartbeatRequest(hostname, ip, agentDirs)
 	if g.Config().Debug {
 		log.Println("====>>>>")
 		log.Println(heartbeatRequest)
