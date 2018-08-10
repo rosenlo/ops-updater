@@ -2,15 +2,16 @@ package cron
 
 import (
 	"fmt"
-	"github.com/RosenLo/ops-common/model"
-	"github.com/RosenLo/ops-common/utils"
-	"github.com/toolkits/file"
-	"io/ioutil"
 	"log"
 	"os/exec"
 	"path"
 	"strings"
 	"time"
+
+	"github.com/RosenLo/ops-common/model"
+	"github.com/RosenLo/ops-common/utils"
+	"github.com/RosenLo/ops-updater/g"
+	"github.com/toolkits/file"
 )
 
 func StartDesiredAgent(da *model.DesiredAgent) {
@@ -18,15 +19,16 @@ func StartDesiredAgent(da *model.DesiredAgent) {
 		return
 	}
 
-	if err := InsureNewVersionFiles(da); err != nil {
+	restart, err := InsureNewVersionFiles(da)
+	if err != nil {
 		return
 	}
 
-	if err := Untar(da); err != nil {
+	if err := Untar(da, restart); err != nil {
 		return
 	}
 
-	if err := StopAgentOf(da.Name, da.Version); err != nil {
+	if err := StopAgentOf(da.Name, da.Version, restart); err != nil {
 		return
 	}
 
@@ -37,10 +39,16 @@ func StartDesiredAgent(da *model.DesiredAgent) {
 	file.WriteString(path.Join(da.AgentDir, ".version"), da.Version)
 }
 
-func Untar(da *model.DesiredAgent) error {
+func Untar(da *model.DesiredAgent, restart bool) error {
+	if !restart {
+		return nil
+	}
 	cmd := exec.Command("tar", "zxf", da.TarballFilename)
 	cmd.Dir = da.AgentVersionDir
 	err := cmd.Run()
+	if g.Config().Debug {
+		log.Println("untar...")
+	}
 	if err != nil {
 		log.Println("tar zxf", da.TarballFilename, "fail", err)
 		return err
@@ -56,6 +64,9 @@ func ControlStartIn(workdir string) error {
 	}
 
 	_, err = ControlStart(workdir)
+	if g.Config().Debug {
+		log.Println("start agent...")
+	}
 	if err != nil {
 		return err
 	}
@@ -70,35 +81,37 @@ func ControlStartIn(workdir string) error {
 	return err
 }
 
-func InsureNewVersionFiles(da *model.DesiredAgent) error {
-	if FilesReady(da) {
-		return nil
+func InsureNewVersionFiles(da *model.DesiredAgent) (bool, error) {
+	downloadMd5Cmd := exec.Command("wget", "-q", "-T 5", "-t 1", da.Md5Url, "-O", da.Md5Filename)
+	downloadMd5Cmd.Dir = da.AgentVersionDir
+	err := downloadMd5Cmd.Run()
+	if g.Config().Debug {
+		log.Println("download md5 file")
 	}
-	content, err := ioutil.ReadFile("./password")
-	password := strings.Trim(string(content), "\n")
 	if err != nil {
-		panic(err)
-	}
-	downloadTarballCmd := exec.Command("wget", "--no-check-certificate", "--auth-no-challenge", "--user=owl", "--password="+password, da.TarballUrl, "-O", da.TarballFilename)
-	downloadTarballCmd.Dir = da.AgentVersionDir
-	err = downloadTarballCmd.Run()
-	if err != nil {
-		log.Println("wget -q --no-check-certificate --auth-no-challenge --user=owl --password="+password, da.TarballUrl, "-O", da.TarballFilename, "fail", err)
-		return err
+		log.Println("wget -q -T 5 -t 1", da.Md5Url, "-O", da.Md5Filename, "fail", err)
+		return false, err
 	}
 
-	downloadMd5Cmd := exec.Command("wget", "--no-check-certificate", "--auth-no-challenge", "--user=owl", "--password="+password, da.Md5Url, "-O", da.Md5Filename)
-	downloadMd5Cmd.Dir = da.AgentVersionDir
-	err = downloadMd5Cmd.Run()
+	if FilesReady(da) {
+		return false, nil
+	}
+
+	downloadTarballCmd := exec.Command("wget", "-q", "-T 5", "-t 1", da.TarballUrl, "-O", da.TarballFilename)
+	downloadTarballCmd.Dir = da.AgentVersionDir
+	err = downloadTarballCmd.Run()
+	if g.Config().Debug {
+		log.Println("download tarball")
+	}
 	if err != nil {
-		log.Println("wget -q --no-check-certificate --auth-no-challenge --user=owl --password="+password, da.Md5Url, "-O", da.Md5Filename, "fail", err)
-		return err
+		log.Println("wget -q -T 5 -t 1", da.TarballUrl, "-O", da.TarballFilename, "fail", err)
+		return false, err
 	}
 
 	if utils.Md5sumCheck(da.AgentVersionDir, da.Md5Filename) {
-		return nil
+		return true, nil
 	} else {
-		return fmt.Errorf("md5sum -c fail")
+		return false, fmt.Errorf("md5sum -c fail")
 	}
 }
 

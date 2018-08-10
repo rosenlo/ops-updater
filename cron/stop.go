@@ -1,13 +1,14 @@
 package cron
 
 import (
-	"github.com/RosenLo/ops-common/model"
-	"github.com/RosenLo/ops-updater/g"
-	"github.com/toolkits/file"
 	"log"
 	"path"
 	"strings"
 	"time"
+
+	"github.com/RosenLo/ops-common/model"
+	"github.com/RosenLo/ops-updater/g"
+	"github.com/toolkits/file"
 )
 
 func StopDesiredAgent(da *model.DesiredAgent) {
@@ -18,7 +19,7 @@ func StopDesiredAgent(da *model.DesiredAgent) {
 	ControlStopIn(da.AgentVersionDir)
 }
 
-func StopAgentOf(agentName, newVersion string) error {
+func StopAgentOf(agentName, newVersion string, restart bool) error {
 	agentDir := path.Join(g.SelfDir, agentName)
 	versionFile := path.Join(agentDir, ".version")
 
@@ -32,13 +33,13 @@ func StopAgentOf(agentName, newVersion string) error {
 		log.Printf("WARN: read %s fail %s", version, err)
 		return nil
 	}
+	versionDir := path.Join(agentDir, version)
 
-	if version == newVersion {
+	if version == newVersion && !restart {
 		// do nothing
 		return nil
 	}
 
-	versionDir := path.Join(agentDir, version)
 	if !file.IsExist(versionDir) {
 		log.Printf("WARN: %s nonexistent", versionDir)
 		return nil
@@ -58,6 +59,9 @@ func ControlStopIn(workdir string) error {
 	}
 
 	_, err = ControlStop(workdir)
+	if g.Config().Debug {
+		log.Println("stop agent...")
+	}
 	if err != nil {
 		return err
 	}
