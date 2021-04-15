@@ -1,7 +1,7 @@
 package g
 
 import (
-	"github.com/toolkits/file"
+	"ops-updater/file"
 )
 
 var SelfDir string

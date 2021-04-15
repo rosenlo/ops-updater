@@ -8,9 +8,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/RosenLo/ops-common/model"
-	"github.com/RosenLo/ops-updater/g"
-	f "github.com/toolkits/file"
+	"ops-common/model"
+	f "ops-updater/file"
+	"ops-updater/g"
 )
 
 func BuildHeartbeatRequest(hostname, ip string, agentDirs []string) model.HeartbeatRequest {

@@ -6,9 +6,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/RosenLo/ops-common/model"
-	"github.com/RosenLo/ops-updater/g"
-	"github.com/toolkits/file"
+	"ops-common/model"
+	"ops-updater/file"
+	"ops-updater/g"
 )
 
 func StopDesiredAgent(da *model.DesiredAgent) {

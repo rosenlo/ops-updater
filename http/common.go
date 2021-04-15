@@ -1,9 +1,9 @@
 package http
 
 import (
-	"github.com/RosenLo/ops-updater/g"
-	"github.com/toolkits/file"
 	"net/http"
+	"ops-updater/file"
+	"ops-updater/g"
 	"strings"
 )
 

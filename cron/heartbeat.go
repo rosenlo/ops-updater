@@ -7,10 +7,10 @@ import (
 	"log"
 	"time"
 
-	"github.com/RosenLo/ops-common/model"
-	"github.com/RosenLo/ops-common/utils"
-	"github.com/RosenLo/ops-updater/g"
-	"github.com/toolkits/net/httplib"
+	"ops-common/model"
+	"ops-common/utils"
+	"ops-updater/g"
+	"ops-updater/httplib"
 )
 
 func Heartbeat() {

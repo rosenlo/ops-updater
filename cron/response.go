@@ -3,8 +3,8 @@ package cron
 import (
 	"log"
 
-	"github.com/RosenLo/ops-common/model"
-	"github.com/RosenLo/ops-updater/g"
+	"ops-common/model"
+	"ops-updater/g"
 )
 
 func HandleHeartbeatResponse(respone *model.HeartbeatResponse) {

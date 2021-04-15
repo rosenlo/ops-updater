@@ -3,11 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/RosenLo/ops-updater/cron"
-	"github.com/RosenLo/ops-updater/g"
-	"github.com/RosenLo/ops-updater/http"
-	"github.com/toolkits/sys"
 	"log"
+	"ops-updater/cron"
+	"ops-updater/g"
+	"ops-updater/http"
+	"ops-updater/sys"
 	"os"
 )
 

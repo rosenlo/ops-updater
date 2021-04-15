@@ -7,7 +7,7 @@ import (
 	_ "net/http/pprof"
 	"os"
 
-	"github.com/RosenLo/ops-updater/g"
+	"ops-updater/g"
 	"github.com/kardianos/osext"
 )
 
